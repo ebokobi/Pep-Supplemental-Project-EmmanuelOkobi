@@ -1,0 +1,12 @@
+A Service layer is meant to handle any business logic your application has. This is things like
+data validation, credentials authentication, ensuring user input is in a valid format, etc.
+
+Data is provided by the Controller layer (the API layer) and then the Service layer performs any
+checks or transformations necesssary before the data interacts with the back-end database.
+
+Sometimes the Service layer will not be able to perform its functions until data is returned from the database
+(think about login credentials: you need to get potential matches from the database before a determination can be made
+about whether the credentials are legit or not).
+
+This means the Service layer is also responsible for sending data into the Repository layer where database interactions
+happen.

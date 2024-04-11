@@ -1,0 +1,11 @@
+The Controller layer of an application (sometimes called the API) is where users initially
+interact with your application. The role of the controller is to take user input and convert
+it into meaningful data for the application. 
+
+In this three tier setup, the controller will convert the incoming data into a format that is
+useable by the application and then it will pass it into the Service layer so that data
+validation can be performed on the user-provided data.
+
+Once the data has been dealt with, one way or another, the Controller layer finishes its work
+by taking any necessary return data, transforming it into end-user meaningful data, and sending
+it back to them.

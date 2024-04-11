@@ -1,0 +1,5 @@
+The Repository Layer is where interactions with your back-end database happen. Data from
+the service layer is used to make queries to the database, and any result sets returned from
+the database are formatted into a data type that your application can understand, and the data
+is returned to the Service layer either for further validation or so the Service Layer can
+send the data to the Controller Layer (the API).
