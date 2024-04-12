@@ -18,7 +18,25 @@ public class UserController {
 	}
 
 	public void register(User registerRequestData) {
-		// TODO: implement
+		/*
+			Because the controller is only responsible for getting user input and returning messages/data
+			to the user, we will simply pass the User data into the service layer, and then depending on
+			the response back from the Service layer, tell the user their request was successful or not
+		 */
+
+		/*
+			The register method is set to return a User object no matter what, so I chose to return an
+			empty User (no fields set) if the registration action failed. This lets me check if the Id is
+			initialized, and if not, I know the register action failed and the user should be informed.
+			Alternatively, if the registration was a success the the Id should be initialized an I can give
+			a success message to the user
+		 */
+		User userResponse = userService.register(registerRequestData);
+		if (userResponse.getId() != 0){
+			System.out.println("Registration successful! Enjoy using the Planetarium!");
+		} else {
+			System.out.println("Registration failed: please double check your username and password and try again.");
+		}
 	}
 
 	public void logout() {
