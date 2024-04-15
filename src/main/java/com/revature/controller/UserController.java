@@ -1,5 +1,6 @@
 package com.revature.controller;
 
+import com.revature.MainDriver;
 import com.revature.models.User;
 import com.revature.models.UsernamePasswordAuthentication;
 import com.revature.service.UserService;
@@ -14,7 +15,14 @@ public class UserController {
 	}
 
 	public void authenticate(UsernamePasswordAuthentication loginRequestData) {
-		// TODO: implement
+		// since we are checking the credentials against the database we can simply pass them to the service layer
+		User possibleUser = userService.authenticate(loginRequestData);
+		if (possibleUser.getId() != 0){
+			MainDriver.loggedInUserId = possibleUser.getId();
+			System.out.println(String.format("Hello %s! Welcome to the Planetarium", possibleUser.getUsername()));
+		} else {
+			System.out.println("Username/Password combo invalid, please try again");
+		}
 	}
 
 	public void register(User registerRequestData) {

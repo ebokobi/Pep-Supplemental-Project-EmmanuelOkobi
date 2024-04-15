@@ -13,8 +13,18 @@ public class UserService {
 	}
 
 	public User authenticate(UsernamePasswordAuthentication loginRequestData) {
-		// TODO: implement
-		return null;
+		// since this is where the credentials are actually authenticated we can use the username and newly finished
+		// dao method to find users by username, and check to see if we get a user back
+		User possibleUser = dao.getUserByUsername(loginRequestData.getUsername());
+		if(possibleUser != null){
+			// the commented line is redundant
+//			boolean usernamesMatch = loginRequestData.getUsername().equals(possibleUser.getUsername());
+			boolean passwordsMatch = loginRequestData.getPassword().equals(possibleUser.getPassword());
+			if (passwordsMatch){
+				return possibleUser;
+			}
+		}
+		return new User();
 	}
 
 	public User register(User registerRequestData) {
@@ -33,7 +43,6 @@ public class UserService {
 			 */
 			// NOTE: the dao method currently returns a null value
 			User databaseData = dao.getUserByUsername(registerRequestData.getUsername());
-
 			/*
 				Using the dao method to grab any account that already has the username the registering user
 				is trying to use, we can check if the username is already in use. If not, we can go through with
@@ -55,7 +64,7 @@ public class UserService {
 				String usernameFromDatabase = databaseData.getUsername();
 				String usernameFromRegisterRequest = registerRequestData.getUsername();
 				// checking if the usernames are not the same
-				if (!usernameFromDatabase.equals(usernameFromRegisterRequest)){
+				if (!usernameFromRegisterRequest.equals(usernameFromDatabase)){
 					// if the data is not the same, then the credentials are valid and I can go through
 					// with account registration. Note the registration method requires a new object:
 					// a UsernamePasswordAuthentication object specifically

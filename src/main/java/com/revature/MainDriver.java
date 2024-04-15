@@ -4,11 +4,14 @@ import java.util.Scanner;
 
 import com.revature.controller.UserController;
 import com.revature.models.User;
+import com.revature.models.UsernamePasswordAuthentication;
 import com.revature.repository.UserDao;
 import com.revature.service.UserService;
 import com.revature.utilities.ConnectionUtil;
 
 public class MainDriver {
+
+    public static int loggedInUserId = 0;
 
     public static UserDao userDao = new UserDao();
     public static UserService userService = new UserService(userDao);
@@ -58,7 +61,20 @@ public class MainDriver {
                     userController.register(potentialUser);
 
                 } else if (userChoice.equals("2")){
-                    System.out.println("You chose to log in!");
+                    System.out.println("\nYou chose to log in!");
+                    System.out.print("Please enter your username: ");
+                    String username = scanner.nextLine();
+
+                    System.out.print("Please enter your password: ");
+                    String password = scanner.nextLine();
+
+                    UsernamePasswordAuthentication credentials = new UsernamePasswordAuthentication();
+                    credentials.setUsername(username);
+                    credentials.setPassword(password);
+
+                    userController.authenticate(credentials);
+
+
                 } else if (userChoice.equals("q")) {
                     System.out.println("Goodbye!");
                     userIsActive = false;
