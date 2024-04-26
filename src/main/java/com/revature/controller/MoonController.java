@@ -1,5 +1,6 @@
 package com.revature.controller;
 
+import com.revature.MainDriver;
 import com.revature.models.Moon;
 import com.revature.service.MoonService;
 
@@ -11,27 +12,38 @@ public class MoonController {
 		this.moonService = moonService;
 	}
 
-	public void getAllMoons(int currentUserId) {
+	public void getAllMoons() {
 		// TODO: implement
+		moonService.getAllMoons();
 	}
 
-	public void getMoonByName(int currentUserId, String name) {
+	public void getMoonByName(int myPlanetId, String requestMoonName) {
 		// TODO: implement
+		moonService.getMoonByName(myPlanetId, requestMoonName);
 	}
 
-	public void getMoonById(int currentUserId, int id) {
+	public void getMoonById(int myPlanetId, int requestMoonId) {
 		// TODO: implement
+		moonService.getMoonById(myPlanetId, requestMoonId);
 	}
 
-	public void createMoon(int currentUserId, Moon moon) {
+	public void createMoon(Moon requestMoon) {
 		// TODO: implement
+		Moon validUserMoon = moonService.createMoon(requestMoon);
+		if (validUserMoon.getId() != 0){
+			System.out.println("Moon created successfully!");
+		} else {
+			System.out.println("Failed to create Moon, please make sure your moon name is unique and under 30 characters.");
+		}
 	}
 
-	public void deleteMoon(int id) {
+	public void deleteMoon(int requestMoonId) {
 		// TODO: implement
+		moonService.deleteMoonById(requestMoonId);
 	}
 	
 	public void getPlanetMoons(int myPlanetId) {
 		// TODO: implement
+		moonService.getMoonsFromPlanet(myPlanetId);
 	}
 }

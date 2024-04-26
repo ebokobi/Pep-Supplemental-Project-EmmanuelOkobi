@@ -27,8 +27,8 @@ The Planetarium is a web service that allows Astronomers (Users) to record plane
             - users should be able to purchase items
 
 ## Business Requirements
-- Users should be able to open a new account with the Planetarium
-- Users should be able to securely log in to their account
+- Users should be able to open a new account with the Planetarium                                   // check
+- Users should be able to securely log in to their account                                          // check
 - Users should be able to add new Planets to the Planetarium
 - Users should be able to remove Planets from the Planetarium they previously added
 - Users should be able to add Moons to the Planetarium associated with their Planets
@@ -36,8 +36,8 @@ The Planetarium is a web service that allows Astronomers (Users) to record plane
 - Users should be able to view Planet and Moons they have added to the Planetarium
 
 ## Software Requirements  
-- Users should have unique usernames
-- Usernames and passwords should not be longer than 30 characters
+- Users should have unique usernames                                                                // check
+- Usernames and passwords should not be longer than 30 characters                                   // check
 - Users should only see Planet and Moon data for resources they have added to the Planetarium
 - Planet and Moon names should not have more than 30 characters
 - Planets and moons should have unique names

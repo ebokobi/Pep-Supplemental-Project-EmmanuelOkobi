@@ -27,7 +27,7 @@ public class UserDao {
              */
             User possibleUser = new User(); // creating the user to be returned here
             ResultSet rs =  ps.executeQuery();
-            if(rs.next()){
+            while(rs.next()){
                 // if the next method returns true then there is data we can put into our User object
                 int retrievedId = rs.getInt("id"); // I could put the column number instead
                 String retrievedUsername = rs.getString("username");
@@ -35,8 +35,9 @@ public class UserDao {
                 possibleUser.setId(retrievedId);
                 possibleUser.setUsername(retrievedUsername);
                 possibleUser.setPassword(retrievedPassword);
+                return possibleUser;
             }
-            return possibleUser;
+            return possibleUser; //return either empty user or retrieved user based on result set
         } catch (SQLException e){
             e.printStackTrace();
             return null;
@@ -60,11 +61,11 @@ public class UserDao {
             // created user
             ResultSet rs = ps.getGeneratedKeys();
             User newUser = new User();
-            newUser.setUsername(registerRequest.getUsername());
-            newUser.setPassword(registerRequest.getPassword());
             if(rs.next()){
                 // since we are only returning the generated id, we can get it by referencing column 1
                 newUser.setId(rs.getInt(1));
+                newUser.setUsername(registerRequest.getUsername());
+                newUser.setPassword(registerRequest.getPassword());
             }
             return newUser;
         } catch (SQLException e){
@@ -74,14 +75,14 @@ public class UserDao {
 
     }
 
-    public static void main(String[] args) {
-        UserDao dao = new UserDao();
-        UsernamePasswordAuthentication newCreds = new UsernamePasswordAuthentication();
-        newCreds.setUsername("new user");
-        newCreds.setPassword("new pass");
-        User returnedUser = dao.createUser(newCreds);
-        System.out.println(returnedUser);
+    // public static void main(String[] args) {
+    //     UserDao dao = new UserDao();
+    //     User newCreds = new User();
+    //     newCreds.setUsername("new user");
+    //     newCreds.setPassword("new pass");
+    //     User returnedUser = dao.createUser(newCreds);
+    //     System.out.println(returnedUser);
 
-    }
+    // }
 
 }
