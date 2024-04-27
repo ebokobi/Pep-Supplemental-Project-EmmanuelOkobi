@@ -25,20 +25,18 @@ public class PlanetController {
 		planetService.getPlanetByName(currentUserId, name);
 	}
 
-	public void getPlanetByID(int currentUserId, int id) {
+	public void getPlanetByID(int currentUserId, int planetId) {
 		// TODO: implement
 		currentUserId = MainDriver.loggedInUserId;
-		planetService.getPlanetById(currentUserId, id);
+		planetService.getPlanetById(currentUserId, planetId);
 	}
 
-	public void createPlanet(int currentUserId, Planet requestPlanet) throws PlanetFailException {
+	public void createPlanet(int currentUserId, Planet requestPlanet) {
 		currentUserId = MainDriver.loggedInUserId;
 		Planet validUserPlanet = planetService.createPlanet(currentUserId, requestPlanet);
 		if (validUserPlanet.getId() != 0){
-			System.out.println(String.format("%s is now yours >:)  \nIf this planet has moons, you can create one when prompted.\n", requestPlanet.getName()));
-		} else {
-		throw new PlanetFailException("Failed to create Planet, please make sure your planet name is unique and under 30 characters and try again.\n"); 
-		}
+			System.out.println(String.format("\nPlanet %s has been spawned and is now yours >:)  \nIf this planet has moons, you can create them when prompted.\n", requestPlanet.getName()));
+		} 
 	}
 
 	public void deletePlanet(int currentUserId, int planetId) {

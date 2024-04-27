@@ -39,8 +39,8 @@ The Planetarium is a web service that allows Astronomers (Users) to record plane
 - Users should have unique usernames                                                                // check
 - Usernames and passwords should not be longer than 30 characters                                   // check
 - Users should only see Planet and Moon data for resources they have added to the Planetarium
-- Planet and Moon names should not have more than 30 characters
-- Planets and moons should have unique names
+- Planet and Moon names should not have more than 30 characters                                     // check
+- Planets and moons should have unique names                                                        // check
 - Planets should be “owned” by the user that added it to the Planetarium
 - Moons should be “owned” by the Planet the User adding the moon associated it with
 

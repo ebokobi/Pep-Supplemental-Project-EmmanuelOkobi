@@ -15,15 +15,15 @@ public class PlanetDao {
     public List<Planet> getAllPlanets(int userId) {
 		List<Planet> allPlanets = new ArrayList<>();
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "SELECT * FROM planets WHERE planet_owner_id = ?";
+			String sql = "SELECT * FROM planets WHERE id = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1,userId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()){
 				Planet planet = new Planet();
-				planet.setId(rs.getInt("planet_id"));
-				planet.setName(rs.getString("planet_name"));
-				planet.setOwnerId(rs.getInt("planet_owner_id"));
+				planet.setId(rs.getInt("id"));
+				planet.setName(rs.getString("name"));
+				planet.setOwnerId(rs.getInt("ownerId"));
 				allPlanets.add(planet);
 			}
 
@@ -36,15 +36,15 @@ public class PlanetDao {
 
 	public Planet getPlanetByName(String planetName) {
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "SELECT * FROM planets WHERE planet_name = ?";
+			String sql = "SELECT * FROM planets WHERE name = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, planetName);
 			ResultSet rs = ps.executeQuery();
 			Planet retrievedPlanet = new Planet();
 			if (rs.next()){
-				retrievedPlanet.setId(rs.getInt("planet_id"));
-				retrievedPlanet.setName(rs.getString("planet_name"));
-				retrievedPlanet.setOwnerId(rs.getInt("planet_owner_id"));
+				retrievedPlanet.setId(rs.getInt("id"));
+				retrievedPlanet.setName(rs.getString("name"));
+				retrievedPlanet.setOwnerId(rs.getInt("ownerId"));
 			}
 			return retrievedPlanet;
 
@@ -56,15 +56,15 @@ public class PlanetDao {
 
 	public Planet getPlanetById(int planetId) {
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "SELECT * FROM planets WHERE planet_id = ?";
+			String sql = "SELECT * FROM planets WHERE id = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, planetId);
 			ResultSet rs = ps.executeQuery();
 			Planet retrievedPlanet = new Planet();
 			if (rs.next()){
-				retrievedPlanet.setId(rs.getInt("planet_id"));
-				retrievedPlanet.setName(rs.getString("planet_name"));
-				retrievedPlanet.setOwnerId(rs.getInt("planet_owner_id"));
+				retrievedPlanet.setId(rs.getInt("id"));
+				retrievedPlanet.setName(rs.getString("name"));
+				retrievedPlanet.setOwnerId(rs.getInt("ownerId"));
 			}
 			return retrievedPlanet;
 
@@ -76,7 +76,7 @@ public class PlanetDao {
 
 	public Planet createPlanet(Planet p) {
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "INSERT INTO planets (planet_name, planet_owner_id) VALUES (?,?)";
+			String sql = "INSERT INTO planets (name, ownerId) VALUES (?,?)";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setString(1, p.getName());
 			ps.setInt(2,p.getOwnerId());
@@ -98,7 +98,7 @@ public class PlanetDao {
 
 	public boolean deletePlanetById(int planetId) {
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "DELETE FROM planets WHERE planet_id = ?";
+			String sql = "DELETE FROM planets WHERE id = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, planetId);
 			if(ps.executeUpdate() > 0){ //if the change is reflected in the db table

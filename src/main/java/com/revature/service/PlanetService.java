@@ -3,6 +3,7 @@ package com.revature.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.MainDriver;
 import com.revature.exceptions.PlanetFailException;
 import com.revature.models.Planet;
 import com.revature.repository.PlanetDao;
@@ -33,10 +34,13 @@ public class PlanetService {
 		return new Planet();
 	}
 
-	public Planet getPlanetById(int requestOwnerId, int planetId) {
+	public Planet getPlanetById(int requestOwnerId, int planetId) throws PlanetFailException{
 		Planet databaseData = dao.getPlanetById(planetId);
 		if (databaseData != null && requestOwnerId == databaseData.getOwnerId()){ 
 			return dao.getPlanetById(planetId);
+		} else {
+			System.out.println(new PlanetFailException("\n\nMake sure you are the owner of this planet/id., try again"));
+			//tryCreatePlAgain();
 		}
 		return new Planet();
 	}
@@ -46,12 +50,18 @@ public class PlanetService {
 			Planet databaseData = dao.getPlanetByName(requestedPlanet.getName());
 			if (databaseData != null){
 				if (!requestedPlanet.getName().equals(databaseData.getName())){ // (Software Requirement): Planets should have unique names
-					requestedPlanet.setOwnerId(requestOwnerId); // assign the requested planet's ownerid to the request ownerid 
-					Planet uniquePlanet = new Planet();
-					return dao.createPlanet(uniquePlanet);
-				} else { throw new PlanetFailException("That planet has already been conquered <:( please try a different name\n");}
+					requestedPlanet.setOwnerId(requestOwnerId); // assign the requested planet's ownerid to the request ownerid
+					return dao.createPlanet(requestedPlanet);
+				} else { return new Planet(); }
+			} 
+			else { 
+				System.out.println(new PlanetFailException("Something went wrong, XP please try again\n"));
+				return new Planet();
 			}
-		} else { throw new PlanetFailException("Your username is exceeds 30 characters, try again.");}
+		} else { 
+			System.out.println(new PlanetFailException("\n\nMake sure Planet name doesn't exceed 30 characters.")); 
+			MainDriver.reEnterCreatePl();
+		}
 		return new Planet(); // return an empty planet with id=0 to controller if requirements are not met
 	}
 

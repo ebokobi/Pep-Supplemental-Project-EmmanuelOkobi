@@ -15,21 +15,21 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	public void authenticate(UsernamePasswordAuthentication loginRequestData) throws UserFailException {
+	public void authenticate(UsernamePasswordAuthentication loginRequestData) {
 		// since we are checking the credentials against the database we can simply pass them to the service layer
 		User possibleUser = userService.authenticate(loginRequestData);
 		if (possibleUser.getId() != 0){
 			MainDriver.loggedInUserId = possibleUser.getId();
 			MainDriver.loggedInUsername = possibleUser.getUsername();
 			System.out.println(String.format("\n\nWelcome back to the Planetarium %s!", possibleUser.getUsername()));
-		} else { System.out.println(new UserFailException("\n\nNo account with this username exists yet! If you meant to create an account, do so when prompted.\n"));}
+		} 
 	}
 
 	public void register(User registerRequestData) throws UserFailException {
 		User userResponse = userService.register(registerRequestData);
 		if (userResponse.getId() != 0){
 			System.out.println("\n\nRegistration successful! Login and enjoy using the Planetarium!");
-		} 
+		}
 	}
 
 	public void logout() {

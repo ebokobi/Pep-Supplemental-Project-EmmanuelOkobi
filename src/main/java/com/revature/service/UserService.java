@@ -18,13 +18,16 @@ public class UserService {
 		// since this is where the credentials are actually authenticated we can use the username and newly finished
 		// dao method to find users by username, and check to see if we get a user back
 		User possibleUser = dao.getUserByUsername(loginRequestData.getUsername());
-		if(possibleUser.getUsername() != null && possibleUser != null){ // if dao method doesnt return null and doesn't return an empty user then user exists
-			boolean passwordsMatch = loginRequestData.getPassword().equals(possibleUser.getPassword());
-			if (passwordsMatch){
+		if (possibleUser != null){
+			if (possibleUser.getUsername().equals(loginRequestData.getUsername()) && possibleUser.getPassword().equals(loginRequestData.getPassword())){ // if dao method doesnt return null and username/pass match then user exists
 				return possibleUser;
-			} else { System.out.println(new UserFailException("Username and/or Password incorrect, please try again.\n"));}
-		}  // else username is available
-		return new User();
+			}
+			else { 
+				System.out.println(new UserFailException("\n\n\nUsername and/or Password incorrect, please try again."));
+				return new User();
+			}
+		} else { System.out.println(new UserFailException("\nSomething went wrong, please try again."));}
+		return possibleUser;
 	}
 
 
@@ -76,10 +79,7 @@ public class UserService {
 					// database. We can return a User object with Data that has been initialized to inform
 					// the controller layer the registration process was successful
 					return dao.createUser(validUserCreds);
-				} //else { //if nonempty user is returned by database then username is taken
-					// if credentials are not the same then username is taken
-					//System.out.print("\n\nUsername already in use, create something unique and try again!\n");
-				//}
+				} 
 			} else {
 				System.out.println(new UserFailException("\n\nSomething went wrong, please try again.\n")); //possible bugger
 				return new User();

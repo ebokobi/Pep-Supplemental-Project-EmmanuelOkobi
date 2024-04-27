@@ -27,13 +27,11 @@ public class MoonController {
 		moonService.getMoonById(myPlanetId, requestMoonId);
 	}
 
-	public void createMoon(Moon requestMoon) {
+	public void createMoon(int myPlanetId, Moon requestMoon) {
 		// TODO: implement
-		Moon validUserMoon = moonService.createMoon(requestMoon);
+		Moon validUserMoon = moonService.createMoon(myPlanetId,requestMoon);
 		if (validUserMoon.getId() != 0){
-			System.out.println("Moon created successfully!");
-		} else {
-			System.out.println("Failed to create Moon, please make sure your moon name is unique and under 30 characters.");
+			System.out.println("\nMoon created successfully! View Moons when prompted.");
 		}
 	}
 

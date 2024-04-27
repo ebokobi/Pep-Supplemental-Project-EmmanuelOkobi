@@ -2,6 +2,8 @@ package com.revature.service;
 
 import java.util.List;
 
+import com.revature.MainDriver;
+import com.revature.exceptions.MoonFailException;
 import com.revature.models.Moon;
 import com.revature.repository.MoonDao;
 
@@ -19,16 +21,14 @@ public class MoonService {
 	}
 
 	public Moon getMoonByName(int myPlanetId, String requestMoonName) {
-		// TODO implement
 		Moon databaseData = dao.getMoonByName(requestMoonName);
 		if (databaseData != null && myPlanetId == databaseData.getMyPlanetId()){
-			return dao.getMoonByName(requestMoonName);
+			return databaseData;
 		}
 		return new Moon();
 	}
 
 	public Moon getMoonById(int myPlanetId, int requestMoonId) {
-		// TODO implement
 		Moon databaseData = dao.getMoonById(requestMoonId);
 		if (databaseData != null && myPlanetId == databaseData.getMyPlanetId()){
 			return dao.getMoonById(requestMoonId);
@@ -36,20 +36,19 @@ public class MoonService {
 		return new Moon();
 	}
 
-	public Moon createMoon(Moon m) {
-		// TODO implement
+	public Moon createMoon(int myPlanetId, Moon m) {
 		if (m.getName().length() <= 30){ //(Software Requirement): Moon names should not have more than 30 characters
 			Moon databaseData = dao.getMoonByName(m.getName());
 			if (databaseData != null){
-				String moonNameFromDB = databaseData.getName();
-				String moonNameFromRequest = m.getName();
-				if (!moonNameFromDB.equals(moonNameFromRequest)){ // (Software Requirement): Moons should have unique names
-					Moon uniqueMoon = new Moon();
-					uniqueMoon.setName(moonNameFromRequest);
-					uniqueMoon.setMyPlanetId(m.getMyPlanetId());
-					return dao.createMoon(uniqueMoon);
-				}
-			}
+				if (databaseData.getName() != (m.getName())){ // (Software Requirement): Moons should have unique names
+					m.setMyPlanetId(myPlanetId);
+					return dao.createMoon(m);
+				} else { return new Moon(); }
+			} else { System.out.println(new MoonFailException("\n\nSomething went wrong, please try again.\n")); return new Moon();}
+		} 
+		else {
+			System.out.println(new MoonFailException("\n\nMake sure Moon name doesn't exceed 30 characters."));
+			MainDriver.reEnterCreateMn();
 		}
 		return new Moon(); //Return an empty moon to controller if requirements are not met
 	}
@@ -59,7 +58,6 @@ public class MoonService {
 	}
 
 	public List<Moon> getMoonsFromPlanet(int requestPlanetId) {
-		// TODO Auto-generated method stub
 		List<Moon> dbMoons = dao.getAllMoons();
 		for (Moon i : dbMoons){
 			if(i.getMyPlanetId() != requestPlanetId){
