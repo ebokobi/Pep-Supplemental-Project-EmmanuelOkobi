@@ -5,6 +5,7 @@ public class Moon {
 	private int id;
 	private String name; 
 	private int myPlanetId;
+	private String myPlanetName;
 	
 	public int getId() {
 		return id;
@@ -24,6 +25,12 @@ public class Moon {
 	public void setMyPlanetId(int myPlanetId) {
 		this.myPlanetId = myPlanetId;
 	}
+	public void setMyPlanetName(String myPlanetName) {
+		this.myPlanetName = myPlanetName;
+	}
+	public String getMyPlanetName(){
+		return myPlanetName;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -40,7 +47,8 @@ public class Moon {
 	}
 	@Override
 	public String toString() {
-		return "Moon [id=" + id + ", name=" + name + ", myPlanetId=" + myPlanetId + "]";
+		return "Moon [id=" + id + ", name=" + name + ", myPlanetId=" + myPlanetId + ", myPlanetName=" + myPlanetName + "]";
 	}
+
 
 }

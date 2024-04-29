@@ -14,7 +14,7 @@ public class UserService {
 		this.dao = dao;
 	}
 
-	public User authenticate(UsernamePasswordAuthentication loginRequestData) {
+	public User authenticate(User loginRequestData) throws UserFailException {
 		// since this is where the credentials are actually authenticated we can use the username and newly finished
 		// dao method to find users by username, and check to see if we get a user back
 		User possibleUser = dao.getUserByUsername(loginRequestData.getUsername());
@@ -26,8 +26,11 @@ public class UserService {
 				System.out.println(new UserFailException("\n\n\nUsername and/or Password incorrect, please try again."));
 				return new User();
 			}
-		} else { System.out.println(new UserFailException("\nSomething went wrong, please try again."));}
-		return possibleUser;
+		} else {
+			System.out.print(new UserFailException("\n\nSomething went wrong, try again."));
+		}
+		System.out.print(new UserFailException("\n\nLogin Unsuccessful, try again."));
+		return new User();
 	}
 
 

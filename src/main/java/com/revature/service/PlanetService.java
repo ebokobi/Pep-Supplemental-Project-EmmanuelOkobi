@@ -18,29 +18,35 @@ public class PlanetService {
 
 	public List<Planet> getAllPlanets(int requestOwnerId) {
 		List<Planet> dbPlanets = dao.getAllPlanets(requestOwnerId);
-		for (Planet i : dbPlanets){
-			if(i.getOwnerId() != requestOwnerId){
-				dbPlanets.remove(i);
+		for (Planet p : dbPlanets){
+			if(p.getOwnerId() != requestOwnerId){ //fail-safe check
+				dbPlanets.remove(p);
 			}
-		}
+		} 
 		return dbPlanets;
 	}
 
 	public Planet getPlanetByName(int requestOwnerId, String requestPlanetName) {
 		Planet databaseData = dao.getPlanetByName(requestPlanetName);
-		if (databaseData != null && requestOwnerId == databaseData.getOwnerId()){
-			return dao.getPlanetByName(requestPlanetName);
+		if (databaseData != null){
+			if (requestOwnerId == databaseData.getOwnerId()){
+				return dao.getPlanetByName(requestPlanetName);
+			} else { System.out.println(new PlanetFailException("\n\nMake sure you are the owner of this planet, try again")); }
+		} else { 
+			System.out.println(new PlanetFailException("\n\nSomething went wrong, try again"));
 		}
 		return new Planet();
 	}
 
 	public Planet getPlanetById(int requestOwnerId, int planetId) throws PlanetFailException{
 		Planet databaseData = dao.getPlanetById(planetId);
-		if (databaseData != null && requestOwnerId == databaseData.getOwnerId()){ 
-			return dao.getPlanetById(planetId);
+		if (databaseData != null){ 
+			if (requestOwnerId == databaseData.getOwnerId()){
+				return dao.getPlanetById(planetId);
+			} else { System.out.println(new PlanetFailException("\n\nMake sure you are the owner of this planet, try again")); }
+			
 		} else {
-			System.out.println(new PlanetFailException("\n\nMake sure you are the owner of this planet/id., try again"));
-			//tryCreatePlAgain();
+			System.out.println(new PlanetFailException("\n\nSomething went wrong, try again"));
 		}
 		return new Planet();
 	}
@@ -55,7 +61,7 @@ public class PlanetService {
 				} else { return new Planet(); }
 			} 
 			else { 
-				System.out.println(new PlanetFailException("Something went wrong, XP please try again\n"));
+				System.out.println(new PlanetFailException("Something went wrong, try again\n"));
 				return new Planet();
 			}
 		} else { 
@@ -67,9 +73,11 @@ public class PlanetService {
 
 	public boolean deletePlanetById(int requestOwnerId, int planetId) {
 		Planet databaseData = dao.getPlanetById(planetId);
-		if (databaseData != null && databaseData.getOwnerId() == requestOwnerId){ // if this planet is owned by the current user
-			return dao.deletePlanetById(planetId);
-		}
+		if (databaseData != null){ //planet exists 
+			if (databaseData.getOwnerId() == requestOwnerId){ // planet is owned by current user
+				return dao.deletePlanetById(planetId);
+			}
+		} else { System.out.println(new PlanetFailException("\n\nSomething went wrong, try again.")); }
 		return false; // return false if planet is not deleted
 	}
 }

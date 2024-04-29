@@ -27,7 +27,7 @@ public class UserDao {
              */
             User possibleUser = new User(); // creating the user to be returned here
             ResultSet rs =  ps.executeQuery();
-            while(rs.next()){
+            if(rs.next()){
                 // if the next method returns true then there is data we can put into our User object
                 int retrievedId = rs.getInt("id"); // I could put the column number instead
                 String retrievedUsername = rs.getString("username");

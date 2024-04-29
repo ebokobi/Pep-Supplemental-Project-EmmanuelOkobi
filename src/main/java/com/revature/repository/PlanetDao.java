@@ -12,12 +12,12 @@ import com.revature.utilities.ConnectionUtil;
 
 public class PlanetDao {
     
-    public List<Planet> getAllPlanets(int userId) {
+    public List<Planet> getAllPlanets(int ownerId) {
 		List<Planet> allPlanets = new ArrayList<>();
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "SELECT * FROM planets WHERE id = ?";
+			String sql = "SELECT * FROM planets WHERE ownerId = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setInt(1,userId);
+			ps.setInt(1,ownerId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()){
 				Planet planet = new Planet();
@@ -26,12 +26,11 @@ public class PlanetDao {
 				planet.setOwnerId(rs.getInt("ownerId"));
 				allPlanets.add(planet);
 			}
-
+			return allPlanets;
 		} catch (SQLException e){
 			e.printStackTrace();
 			return null;
 		}
-		return allPlanets;
 	}
 
 	public Planet getPlanetByName(String planetName) {
@@ -104,7 +103,6 @@ public class PlanetDao {
 			if(ps.executeUpdate() > 0){ //if the change is reflected in the db table
 				return true;
 			}
-			
 			return false;
 
 		} catch (SQLException e){

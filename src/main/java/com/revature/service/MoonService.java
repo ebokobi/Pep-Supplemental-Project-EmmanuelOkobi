@@ -1,30 +1,55 @@
 package com.revature.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.revature.MainDriver;
 import com.revature.exceptions.MoonFailException;
+import com.revature.exceptions.PlanetFailException;
 import com.revature.models.Moon;
+import com.revature.models.Planet;
 import com.revature.repository.MoonDao;
+import com.revature.repository.PlanetDao;
 
 public class MoonService {
 
 	private MoonDao dao;
+	private PlanetDao pDao;
 
-	public MoonService(MoonDao dao) {
+	public MoonService(MoonDao dao, PlanetDao pDao) {
 		this.dao = dao;
+		this.pDao = pDao;
 	}
 
 	public List<Moon> getAllMoons() {
-		// TODO implement
 		return dao.getAllMoons();
+	}
+
+	public List<Moon> getAllMoons(int currentUserId) {
+		List<Planet> userAllPlanets = pDao.getAllPlanets(currentUserId);
+		List<Moon> userAllMoons = new ArrayList<>();
+		for (Planet p : userAllPlanets){
+			List<Moon> pMoons = dao.getMoonsFromPlanet(p.getId());
+			userAllMoons.addAll(pMoons);
+		}
+		if (!userAllMoons.isEmpty()){ //user has moons created
+			return userAllMoons;
+		} else {
+			System.out.println("\nYou have no Moons created, do so when promted then try again.");
+		}
+		return new ArrayList<>();
 	}
 
 	public Moon getMoonByName(int myPlanetId, String requestMoonName) {
 		Moon databaseData = dao.getMoonByName(requestMoonName);
-		if (databaseData != null && myPlanetId == databaseData.getMyPlanetId()){
-			return databaseData;
-		}
+		if (databaseData != null){
+			if (myPlanetId == databaseData.getMyPlanetId()){
+				return databaseData;
+			} 
+			else {
+				System.out.println("\nMake sure.............");
+			}
+		} else { System.out.println(new MoonFailException("\n\nSomething went wrong, try again"));}
 		return new Moon();
 	}
 
@@ -57,13 +82,36 @@ public class MoonService {
 		return dao.deleteMoonById(moonId);
 	}
 
-	public List<Moon> getMoonsFromPlanet(int requestPlanetId) {
-		List<Moon> dbMoons = dao.getAllMoons();
-		for (Moon i : dbMoons){
-			if(i.getMyPlanetId() != requestPlanetId){
-				dbMoons.remove(i);
+	public boolean deleteMoonByName(String requestMoonName) {
+		Moon databaseData = dao.getMoonByName(requestMoonName);
+		if (databaseData != null){
+			if (pDao.getPlanetById(databaseData.getMyPlanetId()).getOwnerId() == MainDriver.loggedInUserId){ //if this moon's planet's owner is logged in
+				return deleteMoonById(databaseData.getId());
 			}
+		} else { 
+			System.out.println(new MoonFailException("Something went wrong, try again."));
+			return false;
 		}
-		return dbMoons;
+		return false;
 	}
+
+	public List<Moon> getMoonsFromPlanet(int requestPlanetId) throws MoonFailException{
+		List<Planet> userAllPlanets = pDao.getAllPlanets(MainDriver.loggedInUserId);
+		if (userAllPlanets != null){
+			for (Planet p : userAllPlanets){
+				if(p.getId() == requestPlanetId){
+					if (dao.getMoonsFromPlanet(p.getId()).isEmpty()){
+						System.out.println("\nThis Planet has no Moons, add them when prompted.");
+					} 
+					else {
+						System.out.println(dao.getMoonsFromPlanet(p.getId()));
+					}
+				}
+			}
+		} else { System.out.println(new MoonFailException("\n\nSomething went wrong, try again.")); }
+
+		List<Moon> returnMoons = new ArrayList<>();
+		return returnMoons; //either return moons or empty list
+	}
+
 }

@@ -33,7 +33,7 @@ public class MainDriver {
     public static PlanetController planetController = new PlanetController(planetService);
 
     public static MoonDao moonDao = new MoonDao();
-    public static MoonService moonService = new MoonService(moonDao);
+    public static MoonService moonService = new MoonService(moonDao,planetDao);
     public static MoonController moonController = new MoonController(moonService);
 
     /*
@@ -48,7 +48,7 @@ public class MainDriver {
         // We are using a Try with Resources block to auto close our scanner when we are done with it
         try (Scanner scanner = new Scanner(System.in)){
             while (loggedInUserId == 0){
-                System.out.print("\n>>> Hello! Welcome to the Planetarium! <<< \n\n To Enter, Select: \n1. Register an account \n2. Login to your account. \n3. Leave the Planetarium. \n\nClick: ");
+                System.out.print("\n>>> Hello! Welcome to the Planetarium! <<< \n\n To Enter/Exit, Select: \n1. Register an account \n2. Login to your account. \n3. Leave the Planetarium. \n\nClick: ");
                 String anonUserChoice = scanner.nextLine();
                 if (anonUserChoice.equals("1")){
                     // remind the user of the choice they made
@@ -73,7 +73,7 @@ public class MainDriver {
                         userController.register(potentialUser);
                     }
                     else {
-                        System.out.print("\nUsername already in use, if you meant to login then select return. If not, try to create a unique one! \n\n1. Try again \n2. Return \n\nClick: " );
+                        System.out.print("\nUsername already in use, if you meant to login then select return. If not, try again and create a unique name! \n\n1. Try again \n2. Return \n\nClick: " );
                         String userAction = scanner.nextLine();
                         if (userAction.equals("1")){
                             reEnterRegistration();
@@ -86,7 +86,7 @@ public class MainDriver {
                 }
 
                 else if (anonUserChoice.equals("2")){ // user has chosen to log in
-                    UsernamePasswordAuthentication credentials = new UsernamePasswordAuthentication();
+                    User credentials = new User();
                     System.out.println("\n>>> Planetarium Account Login <<<"); 
                     System.out.print("\nPlease enter your username: ");
                     String username = scanner.nextLine();
@@ -96,7 +96,7 @@ public class MainDriver {
                     String password = scanner.nextLine();
                     credentials.setPassword(password);
 
-                    if (userDao.getUserByUsername(username).getUsername().equals(credentials.getUsername())){
+                    if (userDao.getUserByUsername(username).getUsername() != null && userDao.getUserByUsername(username).getUsername().equals(credentials.getUsername())){ 
                         userController.authenticate(credentials);
                     } else { 
                         System.out.print("\n\nNo account with this username exists yet! If you meant to create an account, do so when prompted.\n");
@@ -105,7 +105,7 @@ public class MainDriver {
                 }
                  
                 else if (anonUserChoice.equals("3")) { // user has chosen to exit 
-                    System.out.println("\n*Thanks for visiting the Planetarium, Goodbye*!");
+                    System.out.println("\n*Thanks for visiting the Planetarium, Goodbye!*");
                     break;
                 } 
                 else {
@@ -114,8 +114,8 @@ public class MainDriver {
             }
 
             while (loggedInUserId > 0){
-                System.out.println(String.format("\n>>> World Wizard: - %s - <<<", loggedInUsername));
-                System.out.print("\nExercise Powers: \n\n1. Create a Planet  \n2. Create a Moon \n3. View Planets \n4. View Moons \n5. Delete a planet \n6. Delete a moon \n7. Logout \n\nClick: ");
+                System.out.println(String.format("\n\n>>> Wizard of Worlds: - %s - <<<", loggedInUsername));
+                System.out.print("\nExercise Powers: \n\n1. Create a Planet  \n2. Create a Moon \n3. View Planets \n4. View Moons \n5. Delete a Planet \n6. Delete a Moon \n7. Logout \n\nClick: ");
                 String loggedInUserChoice = scanner.nextLine();
                 if (loggedInUserChoice.equals("1")){ // user has chosen to create a planet
                     Planet userNewPlanet = new Planet();
@@ -124,9 +124,10 @@ public class MainDriver {
                     if (planetDao.getPlanetByName(userNewPlanetName).getName() == (userNewPlanet.getName())){  //yk the drill, if both null name = available (.equalsIgnorCase: possible fix for alphabet case issue instead of == operator)
                         userNewPlanet.setName(userNewPlanetName);
                         planetController.createPlanet(loggedInUserId, userNewPlanet);
+                        System.out.println("\nYour new Planet's id: " + planetDao.getPlanetByName(userNewPlanetName).getId());
                     }
                     else { 
-                        System.out.print("\nThat planet has already been created, please try a unique name! \n\n1. Try again \n2. Return \n\nClick: ");
+                        System.out.print("\nThat Planet has already been created, please try a unique name! \n\n1. Try again \n2. Return \n\nClick: ");
                         String userAction = scanner.nextLine();
                             if (userAction.equals("1")){
                                 reEnterCreatePl();
@@ -137,11 +138,11 @@ public class MainDriver {
                             else { System.out.println("\nInvalid action, try again"); tryAgainPl();}
                     }
                 }
-                if (loggedInUserChoice.equals("2")){
+                else if (loggedInUserChoice.equals("2")){
                     Moon userNewMoon = new Moon();
-                    System.out.print("\n>>> Create a Moon <<< \n\nWhat planet id will it orbit around?: ");
+                    System.out.print("\n>>> Create a Moon <<< \n\nWhat Planet id will it orbit around?: ");
                     String userPlanetId = scanner.nextLine();
-                    if (planetDao.getPlanetById(Integer.parseInt(userPlanetId)).getOwnerId() == loggedInUserId){ //moon is not owned by anyone
+                    if (planetDao.getPlanetById(Integer.parseInt(userPlanetId)).getOwnerId() == loggedInUserId){ //planet is owned by user
                         System.out.print("\nName Your Moon: ");
                         String userNewMoonName = scanner.nextLine();
                         if (moonDao.getMoonByName(userNewMoonName).getName() == (userNewMoon.getName())){ //if they are both null then moon name is available
@@ -159,9 +160,140 @@ public class MainDriver {
                             }
                             else { System.out.println("\nInvalid action, try again"); tryAgainMn();}
                         }
-                    } else { System.out.println("Make sure you created/own this planet."); tryAgainMn();}
+                    } else { System.out.println("\nMake sure you created/own this Planet."); tryAgainMn();}
+                }
+                else if (loggedInUserChoice.equals("3")){
+                    System.out.print("\n>>> View Planets <<< \n\n1. View All of your Planets \n2. View a specific Planet and its Moons \n3. Return \n\nClick: ");
+                    String userAction = scanner.nextLine();
+                    if (userAction.equals("1")){
+                        if (!planetDao.getAllPlanets(loggedInUserId).isEmpty()) {
+                            planetController.getAllPlanets(loggedInUserId);
+                        } else {
+                            System.out.println("\nYou have no Planets created, do so when promted then try again.");
+                        }
+
+                    }
+                    else if (userAction.equals("2")){
+                        System.out.print("\nWhat Planet would you like to observe?: ");
+                        String userPlanet = scanner.nextLine();
+                        if (planetDao.getPlanetByName(userPlanet).getOwnerId() == loggedInUserId){ //user owns planet
+                            System.out.println("\nHere's your Planet, " + planetDao.getPlanetByName(userPlanet).getName() + " and its Moons: ");
+                            moonController.getPlanetMoons(planetDao.getPlanetByName(userPlanet).getId());
+                        } else { 
+                            System.out.print("\nMake sure you created/own this Planet. \n\n1. Try again \n2. Return \n\nClick: ");
+                            String userAction2 = scanner.nextLine();
+                            if (userAction2.equals("1")){
+                                reEnterVwPl();
+                            } 
+                            else if (userAction2.equals("2")) { 
+                                continue;
+                            }
+                            else { 
+                                System.out.println("\nInvalid action, try again \n\nClick: "); 
+                                userAction2 = scanner.nextLine();
+                            }
+                        }
+                    }
+                    else if (userAction.equals("3")){
+                        continue;
+                    }
+                    else { System.out.println("\nInvalid action, try 'View Planets' again or another option.");}
+                }
+                else if (loggedInUserChoice.equals("4")){
+                    System.out.print("\n>>> View Moons <<< \n\n1. View All of your Moons \n2. Return \n\nClick: ");
+                    String userAction = scanner.nextLine();
+                    if (userAction.equals("1")){
+                        moonController.getAllMoons(loggedInUserId);
+                    }
+                    else if (userAction.equals("2")){
+                        main(args);
+                    } else {
+                        System.out.println("\nInvalid action, try 'View Moons' again or another option.");
+                    }
+                }
+                else if (loggedInUserChoice.equals("5")){
+                    System.out.print("\n>>> Delete a Planet <<< \n\nWhat Planet do you want to eradicate?: ");
+                    String userPlanetName = scanner.nextLine();
+                    if (planetDao.getPlanetByName(userPlanetName).getName() != null && planetDao.getPlanetByName(userPlanetName).getOwnerId() == loggedInUserId){
+                        System.out.print("\nAre you sure? All of its orbiting Moons will also be eradicated. \n\n1. Thanos Snap* \n2. Cancel & Return \n\nClick: ");
+                        String userAction = scanner.nextLine();
+                        if (userAction.equals("1")){
+                            planetController.deletePlanet(loggedInUserId, planetDao.getPlanetByName(userPlanetName).getId());
+                        }
+                        else if (userAction.equals("2")){
+                            continue;
+                        }
+                        else {
+                            System.out.println("\nInvalid action, try 'Delete a Planet' again or another option.");
+                        }
+                    } else { System.out.println("\nMake sure you created/own this planet."); }
+                }
+                else if (loggedInUserChoice.equals("6")){
+                    System.out.print("\n>>> Delete a Moon <<< \n\nWhat Moon do you want to eradicate?: ");
+                    String userMoonName = scanner.nextLine();
+                    System.out.print("\nAre you sure? This Moon will stop orbiting its Planet. \n\n1. Thanos Snap* \n2. Cancel & Return \n\nClick: ");
+                    String userAction = scanner.nextLine();
+                    if (userAction.equals("1")){
+                        moonController.deleteMoon(userMoonName);
+                    }
+                    else if (userAction.equals("2")){
+                        continue;
+                    }
+                    else {
+                        System.out.println("\nInvalid action, try 'Delete a Moon' again or another option.");
+                    }
+                }
+                else if (loggedInUserChoice.equals("7")){
+                    System.out.print("\nConfirm Logout? \n\n1. Yes \n2. No \n\nClick: ");
+                    String userAction = scanner.nextLine();
+                    if (userAction.equals("1")){
+                        userController.logout();
+                    } else { continue; }
+                }
+                else {
+                    System.out.println("\nDoes " + loggedInUserChoice + "look like an option we provided? -_- ");
                 }
 
+            }
+        }
+    }
+
+    public static void tryAgainVwPl() {
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("\n1. Try again \n2. Main Menu \n\nClick: " );
+            String userAction = scanner.nextLine();
+            if (userAction.equals("1")){
+                reEnterVwPl();
+            } 
+            else if (userAction.equals("2")) { 
+                main(null);
+            } else {
+                tryAgainVwPl();
+            }
+        }
+    }
+
+    public static void reEnterVwPl() {
+        try (Scanner scanner = new Scanner(System.in)){
+            System.out.print("\nWhat Planet would you like to observe?: ");
+            String userPlanet = scanner.nextLine();
+            if (planetDao.getPlanetByName(userPlanet).getOwnerId() == loggedInUserId){ //user owns planet
+                System.out.println("\nHere's your Planet, " + planetDao.getPlanetByName(userPlanet).getName() + " and its Moons: ");
+                moonController.getPlanetMoons(planetDao.getPlanetByName(userPlanet).getId());
+                main(null);
+            } else { 
+                System.out.print("\nMake sure you created/own this Planet. \n\n1. Try again \n2. Main Menu \n\nClick: ");
+                            String userAction2 = scanner.nextLine();
+                            if (userAction2.equals("1")){
+                                reEnterVwPl();
+                            } 
+                            else if (userAction2.equals("2")) { 
+                                main(null);
+                            }
+                            else {
+                                System.out.println("\nInvalid action, try again.");
+                                tryAgainVwPl();
+                            }
             }
         }
     }
@@ -174,10 +306,11 @@ public class MainDriver {
             if (planetDao.getPlanetByName(userNewPlanetName).getName() == (userNewPlanet.getName())){  //yk the drill, if both null name = available (.equals/equalsIgnoreCase: possible fix for alphabet case issue instead of == operator)
                 userNewPlanet.setName(userNewPlanetName);
                 planetController.createPlanet(loggedInUserId, userNewPlanet);
+                System.out.println("Your new Planet's id: " + userNewPlanet.getId());
                 main(null);
             }
             else { 
-                System.out.print("That planet has already been created, please try a unique name! \n\n1. Try again \n2. Return \n\nClick: ");
+                System.out.print("\nThat planet has already been created, please try a unique name! \n\n1. Try again \n2. Return \n\nClick: ");
                 String userAction = scanner.nextLine();
                 if (userAction.equals("1")){
                     reEnterCreatePl();
@@ -186,7 +319,7 @@ public class MainDriver {
                     main(null);
                 }
                 else { 
-                    System.out.println("Invalid action, try again \n\nClick: "); 
+                    System.out.println("\nInvalid action, try again \n\nClick: "); 
                     userAction = scanner.nextLine();
                 }
             }
@@ -246,7 +379,7 @@ public class MainDriver {
                         main(null);
                     }
                     else {
-                        System.out.println("Invalid action, try again \n\nClick: "); 
+                        System.out.print("\nInvalid action, try again \n\nClick: "); 
                         userAction = scanner.nextLine();
                     }
                 }
@@ -284,7 +417,7 @@ public class MainDriver {
                 else if (userAction.equals("2")) { 
                     main(null);
                 } else {
-                    System.out.println("Invalid action, try again \n\nClick: "); 
+                    System.out.print("\nInvalid action, try again \n\nClick: "); 
                     userAction = scanner.nextLine();
                 }
             }

@@ -15,14 +15,14 @@ public class UserController {
 		this.userService = userService;
 	}
 
-	public void authenticate(UsernamePasswordAuthentication loginRequestData) {
+	public void authenticate(User loginRequestData) {
 		// since we are checking the credentials against the database we can simply pass them to the service layer
 		User possibleUser = userService.authenticate(loginRequestData);
 		if (possibleUser.getId() != 0){
 			MainDriver.loggedInUserId = possibleUser.getId();
 			MainDriver.loggedInUsername = possibleUser.getUsername();
 			System.out.println(String.format("\n\nWelcome back to the Planetarium %s!", possibleUser.getUsername()));
-		} 
+		}
 	}
 
 	public void register(User registerRequestData) throws UserFailException {
@@ -33,9 +33,9 @@ public class UserController {
 	}
 
 	public void logout() {
+		System.out.println(String.format("\n\n*Goodbye %s, Thanks for visiting the Planetarium!*", MainDriver.loggedInUsername));
 		MainDriver.loggedInUserId = 0;
 		MainDriver.loggedInUsername = "";
-		System.out.println("\nGoodbye!");
 	}
 	
 	public boolean checkAuthorization(int userId) {	

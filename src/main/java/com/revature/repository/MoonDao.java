@@ -27,12 +27,11 @@ public class MoonDao {
 				moon.setMyPlanetId(rs.getInt("myPlanetId"));
 				allMoons.add(moon);
 			}
-
+			return allMoons;
 		} catch (SQLException e){
 			e.printStackTrace();
 			return null;
 		}
-		return allMoons;
 	}
 
 	public Moon getMoonByName(String moonName) {
@@ -56,7 +55,6 @@ public class MoonDao {
 	}
 
 	public Moon getMoonById(int moonId) {
-		// TODO: implement
 		try (Connection connection = ConnectionUtil.createConnection()){
 			String sql = "SELECT * FROM moons WHERE id = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
@@ -106,32 +104,32 @@ public class MoonDao {
 			if(ps.executeUpdate() > 0){
 				return true;
 			}
+			return false;
 		} catch (SQLException e){
 			e.printStackTrace();
 			return false;
 		} 
-		return false;
 	}
 
 	public List<Moon> getMoonsFromPlanet(int myplanetId) {
 		List<Moon> moonsFromPlanet = new ArrayList<>();
 		try (Connection connection = ConnectionUtil.createConnection()){
-			String sql = "SELECT * FROM moons WHERE myPlanetId = ?";
+			String sql = "SELECT moons.myPlanetId, planets.name AS 'myPlanet', moons.id AS 'moonId', moons.name AS 'moonName' FROM moons JOIN planets ON moons.myPlanetId = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setInt(1,myplanetId);
+			ps.setInt(1, myplanetId);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()){
+			if (rs.next()){
 				Moon moon = new Moon();
-				moon.setId(rs.getInt("id"));
-				moon.setName(rs.getString("name"));
 				moon.setMyPlanetId(rs.getInt("myPlanetId"));
+				moon.setMyPlanetName(rs.getString("myPlanet")); //problem causer: not showing 'myPlanet' alias from join
+				moon.setId(rs.getInt("moonId"));
+				moon.setName(rs.getString("moonName"));
 				moonsFromPlanet.add(moon);
 			}
-
+			return moonsFromPlanet;
 		} catch (SQLException e){
 			e.printStackTrace();
 			return null;
 		}
-		return moonsFromPlanet;
 	}
 }
