@@ -22,8 +22,8 @@ public class MoonController {
 	public void getAllMoons(int currentUserId) {
 		moonService.getAllMoons(currentUserId);
 		System.out.println("\n" + MainDriver.loggedInUsername + "'s Moons:\n ");
-		for (Moon moonList : moonService.getAllMoons(currentUserId)){
-			System.out.println(moonList);
+		for (Moon moon : moonService.getAllMoons(currentUserId)){
+			System.out.println(moon);
 		}
 	}
 

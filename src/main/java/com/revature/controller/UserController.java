@@ -33,7 +33,7 @@ public class UserController {
 	}
 
 	public void logout() {
-		System.out.println(String.format("\n\n*Goodbye %s, Thanks for visiting the Planetarium!*", MainDriver.loggedInUsername));
+		System.out.println(String.format("\n\n*Goodbye %s, Hope you enjoyed the Planetarium!*", MainDriver.loggedInUsername));
 		MainDriver.loggedInUserId = 0;
 		MainDriver.loggedInUsername = "";
 	}

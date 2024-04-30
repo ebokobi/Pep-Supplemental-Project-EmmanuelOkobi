@@ -29,20 +29,20 @@ The Planetarium is a web service that allows Astronomers (Users) to record plane
 ## Business Requirements
 - Users should be able to open a new account with the Planetarium                                   // check
 - Users should be able to securely log in to their account                                          // check
-- Users should be able to add new Planets to the Planetarium
-- Users should be able to remove Planets from the Planetarium they previously added
-- Users should be able to add Moons to the Planetarium associated with their Planets
-- Users should be able to remove Moons from the Planetarium they previously added
-- Users should be able to view Planet and Moons they have added to the Planetarium
+- Users should be able to add new Planets to the Planetarium                                        // check
+- Users should be able to remove Planets from the Planetarium they previously added                 // check
+- Users should be able to add Moons to the Planetarium associated with their Planets                // check
+- Users should be able to remove Moons from the Planetarium they previously added                   // check
+- Users should be able to view Planet and Moons they have added to the Planetarium                  // check
 
 ## Software Requirements  
 - Users should have unique usernames                                                                // check
 - Usernames and passwords should not be longer than 30 characters                                   // check
-- Users should only see Planet and Moon data for resources they have added to the Planetarium
+- Users should only see Planet and Moon data for resources they have added to the Planetarium       // check
 - Planet and Moon names should not have more than 30 characters                                     // check
 - Planets and moons should have unique names                                                        // check
-- Planets should be “owned” by the user that added it to the Planetarium
-- Moons should be “owned” by the Planet the User adding the moon associated it with
+- Planets should be “owned” by the user that added it to the Planetarium                            // check
+- Moons should be “owned” by the Planet the User adding the moon associated it with                 // check
 
 ## Development Requirements
 Each class in the list below has one or more unimplemented methods you will need to complete to achieve MVP requirements:
@@ -61,7 +61,7 @@ Each class in the list below has one or more unimplemented methods you will need
 - Miscelanious
     - MainDriver
 
-# MVP Requirements
+# MVP Requirements                                                                                 // check
 - Development
     - all provided methods in the "repository" package are implemented to meet business and software requirements
     - all provided methods in the "service" package are implemented to meet business and software requirements

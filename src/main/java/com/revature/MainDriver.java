@@ -36,19 +36,12 @@ public class MainDriver {
     public static MoonService moonService = new MoonService(moonDao,planetDao);
     public static MoonController moonController = new MoonController(moonService);
 
-    /*
-        An example of how to get started with the registration business and software requirements has been
-        provided in this code base. Feel free to use it yourself, or adjust it to better fit your own vision
-        of the application. The affected classes are:
-            MainDriver
-            UserController
-            UserService
-     */
+
     public static void main(String[] args) {
         // We are using a Try with Resources block to auto close our scanner when we are done with it
         try (Scanner scanner = new Scanner(System.in)){
             while (loggedInUserId == 0){
-                System.out.print("\n>>> Hello! Welcome to the Planetarium! <<< \n\n To Enter/Exit, Select: \n1. Register an account \n2. Login to your account. \n3. Leave the Planetarium. \n\nClick: ");
+                System.out.print("\n>>> Hello! Welcome to the Planetarium! <<< \n\n To Enter/Exit, Select: \n1. Register an account \n2. Login to your account \n3. Leave the Planetarium \n\nClick: ");
                 String anonUserChoice = scanner.nextLine();
                 if (anonUserChoice.equals("1")){
                     // remind the user of the choice they made
@@ -121,7 +114,7 @@ public class MainDriver {
                     Planet userNewPlanet = new Planet();
                     System.out.print("\n>>> Create a Planet <<< \n\nName Your Planet: ");
                     String userNewPlanetName = scanner.nextLine();
-                    if (planetDao.getPlanetByName(userNewPlanetName).getName() == (userNewPlanet.getName())){  //yk the drill, if both null name = available (.equalsIgnorCase: possible fix for alphabet case issue instead of == operator)
+                    if (planetDao.getPlanetByName(userNewPlanetName).getName() != userNewPlanetName && planetDao.getPlanetByName(userNewPlanetName).getOwnerId() == userNewPlanet.getOwnerId()){  //yk the drill, if both null name = available (.equalsIgnorCase: possible fix for alphabet case issue instead of == operator)
                         userNewPlanet.setName(userNewPlanetName);
                         planetController.createPlanet(loggedInUserId, userNewPlanet);
                         System.out.println("\nYour new Planet's id: " + planetDao.getPlanetByName(userNewPlanetName).getId());
@@ -248,6 +241,7 @@ public class MainDriver {
                     String userAction = scanner.nextLine();
                     if (userAction.equals("1")){
                         userController.logout();
+                        main(args);
                     } else { continue; }
                 }
                 else {
@@ -379,54 +373,65 @@ public class MainDriver {
                         main(null);
                     }
                     else {
-                        System.out.print("\nInvalid action, try again \n\nClick: "); 
-                        userAction = scanner.nextLine();
+                        System.out.print("\nInvalid action, try again.");
+                        tryAgainMn();
                     }
                 }
-            }
+            } else { System.out.println("\nMake sure you created/own this Planet."); tryAgainMn();}
         }
     }
 
     public static void reEnterRegistration(){
         try (Scanner scanner = new Scanner(System.in)) {
-            // get the prospective username of the new user
-            System.out.print("\nPlease enter your desired username (maximum 30 characters): ");
-            String potentialUsername = scanner.nextLine();
+            System.out.print("\n1. Retry Registration \n2. Return \n\nClick: ");
+            String userClick = scanner.nextLine();
+            if(userClick.equals("1")){
+                // get the prospective username of the new user
+                System.out.print("\nPlease enter your desired username (maximum 30 characters): ");
+                String potentialUsername = scanner.nextLine();
 
-            // get the prospective password of the new user
-            System.out.print("\nPlease enter your desired password (maximum 30 characters): ");
-            String potentialPassword = scanner.nextLine();
+                // get the prospective password of the new user
+                System.out.print("\nPlease enter your desired password (maximum 30 characters): ");
+                String potentialPassword = scanner.nextLine();
 
-            // create a User object and provide it with the username and password
-            // keep in mind the id will be set by the database if the username and password
-            // are valid
-            User potentialUser = new User();
+                // create a User object and provide it with the username and password
+                // keep in mind the id will be set by the database if the username and password
+                // are valid
+                User potentialUser = new User();
 
-            // pass the data into the service layer for validation
-            if(userDao.getUserByUsername(potentialUsername).getUsername() == (potentialUser.getUsername())){
-                potentialUser.setUsername(potentialUsername);
-                potentialUser.setPassword(potentialPassword);
-                userController.register(potentialUser);
-                main(null);
-            } else {
-                System.out.print("\nUsername already in use, if you meant to login then select return. If not, try to create a unique one! \n\n1. Try again \n2. Return \n\nClick: " );
-                String userAction = scanner.nextLine();
-                if (userAction.equals("1")){
-                    reEnterRegistration();
-                } 
-                else if (userAction.equals("2")) { 
+                // pass the data into the service layer for validation
+                if(userDao.getUserByUsername(potentialUsername).getUsername() == (potentialUser.getUsername())){
+                    potentialUser.setUsername(potentialUsername);
+                    potentialUser.setPassword(potentialPassword);
+                    userController.register(potentialUser);
                     main(null);
                 } else {
-                    System.out.print("\nInvalid action, try again \n\nClick: "); 
-                    userAction = scanner.nextLine();
+                    System.out.print("\n1. Retry Registration \n2. Return \n\nClick: ");
+                    String userAction = scanner.nextLine();
+                    if (userAction.equals("1")){
+                        reEnterRegistration();
+                    } 
+                    else if (userAction.equals("2")) { 
+                        main(null);
+                    } else {
+                        System.out.print("\nInvalid action, try again \n\nClick: "); 
+                        userAction = scanner.nextLine();
+                    }
                 }
+            }
+            else if (userClick.equals("2")){
+                main(null);
+            }
+            else {
+                System.out.println("\nInvalid choice, try again.");
+                tryAgain();
             }
         }
     }
 
     public static void tryAgain(){
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("\n1. Try again \n2. Return \n\nClick: " );
+            System.out.print("\n1. Retry Registration \n2. Return \n\nClick: " );
             String userAction = scanner.nextLine();
             if (userAction.equals("1")){
                 reEnterRegistration();

@@ -47,7 +47,7 @@ public class MoonService {
 				return databaseData;
 			} 
 			else {
-				System.out.println("\nMake sure.............");
+				System.out.println("\nMake sure you created/own this moon, try again.");
 			}
 		} else { System.out.println(new MoonFailException("\n\nSomething went wrong, try again"));}
 		return new Moon();
@@ -96,6 +96,7 @@ public class MoonService {
 	}
 
 	public List<Moon> getMoonsFromPlanet(int requestPlanetId) throws MoonFailException{
+		List<Moon> returnMoons = new ArrayList<>();
 		List<Planet> userAllPlanets = pDao.getAllPlanets(MainDriver.loggedInUserId);
 		if (userAllPlanets != null){
 			for (Planet p : userAllPlanets){
@@ -104,13 +105,16 @@ public class MoonService {
 						System.out.println("\nThis Planet has no Moons, add them when prompted.");
 					} 
 					else {
-						System.out.println(dao.getMoonsFromPlanet(p.getId()));
+						List<Moon> planetMoons = dao.getMoonsFromPlanet(p.getId());
+						for (Moon moon : planetMoons){
+							System.out.println(moon.toString()+ "-> myPlanet = " + p.getName());
+						}
 					}
 				}
 			}
 		} else { System.out.println(new MoonFailException("\n\nSomething went wrong, try again.")); }
 
-		List<Moon> returnMoons = new ArrayList<>();
+		
 		return returnMoons; //either return moons or empty list
 	}
 
